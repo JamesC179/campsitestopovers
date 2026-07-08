@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Layby Log — camper van stopovers</title>
+
+<!-- Leaflet (map) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+  /* ============================================================
+     CONFIG palette — a topographic field-logbook look.
+     ============================================================ */
+  :root{
+    --ink:      #23291f;   /* pine-ink text            */
+    --ink-soft: #5c6551;   /* muted labels             */
+    --paper:    #e8e3d4;   /* map-paper background     */
+    --surface:  #f4f1e7;   /* card surface             */
+    --surface-2:#efeadd;   /* inset surface            */
+    --pine:     #2f5a44;   /* primary brand green      */
+    --pine-deep:#1d3a2c;
+    --amber:    #d9942a;   /* signal accent, sparing   */
+    --rust:     #b1531d;
+    --slate:    #5b6b8c;
+    --line:     rgba(35,41,31,0.14);
+    --line-2:   rgba(35,41,31,0.28);
+    --shadow:   0 1px 2px rgba(29,58,44,.06), 0 8px 24px rgba(29,58,44,.08);
+    --header-h: 62px;
+
+    --f-display:'Bricolage Grotesque', system-ui, sans-serif;
+    --f-body:'Inter', system-ui, sans-serif;
+    --f-mono:'Spline Sans Mono', ui-monospace, monospace;
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; }
+  body{
+    font-family:var(--f-body);
+    color:var(--ink);
+    background-color:var(--paper);
+    /* faint topographic contour texture */
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cg fill='none' stroke='%232f5a44' stroke-opacity='0.05' stroke-width='1.2'%3E%3Cpath d='M-20 120 Q60 60 120 120 T260 120'/%3E%3Cpath d='M-20 150 Q60 90 120 150 T260 150'/%3E%3Cpath d='M-20 90 Q60 30 120 90 T260 90'/%3E%3Cpath d='M-20 180 Q60 120 120 180 T260 180'/%3E%3Cpath d='M-20 60 Q60 0 120 60 T260 60'/%3E%3C/g%3E%3C/svg%3E");
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{ color:var(--pine); }
+  button{ font-family:inherit; cursor:pointer; }
+
+  /* ---------- Header ---------- */
+  header{
+    position:sticky; top:0; z-index:1000;
+    height:var(--header-h);
+    display:flex; align-items:center; gap:14px;
+    padding:0 clamp(14px,3vw,28px);
+    background:var(--pine-deep);
+    color:var(--surface);
+    border-bottom:2px solid var(--amber);
+  }
+  .mark{
+    width:34px; height:34px; flex:none;
+    display:grid; place-items:center;
+    border:1.5px solid var(--amber);
+    border-radius:6px;
+    color:var(--amber);
+    font-family:var(--f-mono); font-weight:600; font-size:13px;
+    transform:rotate(-4deg);
+  }
+  .brand h1{
+    font-family:var(--f-display); font-weight:800;
+    font-size:clamp(17px,2.4vw,22px); letter-spacing:-.01em;
+    margin:0; line-height:1;
+  }
+  .brand p{
+    margin:2px 0 0; font-family:var(--f-mono); font-size:11px;
+    letter-spacing:.06em; text-transform:uppercase;
+    color:rgba(244,241,231,.62);
+  }
+  .header-spacer{ flex:1; }
+  .count-pill{
+    font-family:var(--f-mono); font-size:12px; letter-spacing:.04em;
+    color:var(--paper); border:1px solid rgba(244,241,231,.28);
+    border-radius:999px; padding:5px 11px; white-space:nowrap;
+  }
+  .count-pill b{ color:var(--amber); }
+  .add-btn{
+    background:var(--amber); color:var(--pine-deep);
+    border:none; border-radius:8px; font-weight:600; font-size:14px;
+    padding:9px 15px; display:inline-flex; align-items:center; gap:7px;
+    transition:transform .12s ease, background .12s ease;
+  }
+  .add-btn:hover{ transform:translateY(-1px); background:#e6a53f; }
+  .add-btn svg{ width:15px; height:15px; }
+
+  /* ---------- Controls bar ---------- */
+  .controls{
+    position:sticky; top:var(--header-h); z-index:900;
+    background:rgba(232,227,212,.94); backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+    padding:12px clamp(14px,3vw,28px);
+    display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  }
+  .search{
+    flex:1; min-width:180px;
+    display:flex; align-items:center; gap:8px;
+    background:var(--surface); border:1px solid var(--line-2);
+    border-radius:8px; padding:8px 12px;
+  }
+  .search:focus-within{ border-color:var(--pine); box-shadow:0 0 0 3px rgba(47,90,68,.14); }
+  .search svg{ width:15px; height:15px; color:var(--ink-soft); flex:none; }
+  .search input{
+    border:none; background:none; outline:none; width:100%;
+    font-family:var(--f-body); font-size:14px; color:var(--ink);
+  }
+  .chips{ display:flex; gap:7px; flex-wrap:wrap; }
+  .chip{
+    font-family:var(--f-mono); font-size:12px; letter-spacing:.03em;
+    background:var(--surface); color:var(--ink-soft);
+    border:1px solid var(--line-2); border-radius:999px;
+    padding:6px 12px; transition:all .12s ease;
+  }
+  .chip[aria-pressed="true"]{
+    background:var(--pine); color:var(--surface); border-color:var(--pine);
+  }
+  .chip:hover{ border-color:var(--pine); }
+
+  /* ---------- Layout ---------- */
+  .layout{
+    display:grid; grid-template-columns:1fr;
+    max-width:1500px; margin:0 auto;
+  }
+  @media(min-width:920px){
+    .layout{ grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); }
+  }
+
+  .list{
+    padding:clamp(14px,2.4vw,24px);
+    display:flex; flex-direction:column; gap:16px;
+  }
+  .list-empty{
+    font-family:var(--f-mono); font-size:13px; color:var(--ink-soft);
+    border:1px dashed var(--line-2); border-radius:10px;
+    padding:28px; text-align:center;
+  }
+
+  /* map column */
+  .map-col{
+    order:-1;
+    position:sticky; top:calc(var(--header-h) + 53px);
+    height:44vh;
+    border-bottom:1px solid var(--line);
+  }
+  @media(min-width:920px){
+    .map-col{
+      order:0;
+      top:calc(var(--header-h) + 53px);
+      height:calc(100vh - var(--header-h) - 53px);
+      border-bottom:none; border-left:1px solid var(--line);
+    }
+  }
+  #map{ width:100%; height:100%; background:var(--surface-2); }
+  .leaflet-container{ font-family:var(--f-body); }
+
+  /* custom marker pin */
+  .pin{
+    width:26px; height:26px; border-radius:50% 50% 50% 0;
+    transform:rotate(-45deg); border:2px solid var(--surface);
+    box-shadow:0 2px 5px rgba(0,0,0,.3);
+    display:grid; place-items:center;
+  }
+  .pin span{ transform:rotate(45deg); font-size:12px; }
+  .pin.active{ outline:3px solid var(--amber); outline-offset:1px; }
+
+  /* ---------- Card ---------- */
+  .card{
+    background:var(--surface); border:1px solid var(--line);
+    border-radius:12px; box-shadow:var(--shadow);
+    overflow:hidden; scroll-margin-top:calc(var(--header-h) + 60px);
+    transition:border-color .15s ease, transform .15s ease;
+  }
+  .card.active{ border-color:var(--amber); transform:translateY(-1px); }
+  .card-head{
+    display:flex; align-items:flex-start; gap:12px;
+    padding:15px 16px 11px;
+  }
+  .shield{
+    flex:none; width:52px; text-align:center;
+    border-radius:7px; padding:6px 4px; color:#fff;
+    font-family:var(--f-mono); font-size:10px; font-weight:600;
+    letter-spacing:.04em; line-height:1.25;
+  }
+  .shield .ico{ font-size:15px; display:block; }
+  .card-head-main{ flex:1; min-width:0; }
+  .card-title{
+    font-family:var(--f-display); font-weight:700;
+    font-size:18px; letter-spacing:-.01em; margin:0; line-height:1.15;
+  }
+  .card-place{
+    font-size:13px; color:var(--ink-soft); margin:2px 0 0;
+  }
+  .coords{
+    font-family:var(--f-mono); font-size:11px; color:var(--pine);
+    background:var(--surface-2); border:1px solid var(--line);
+    border-radius:5px; padding:2px 6px; margin-top:6px;
+    display:inline-block; letter-spacing:.02em;
+  }
+  .w3w{
+    font-family:var(--f-mono); font-size:11px; color:#e11f26;
+    text-decoration:none; margin-top:6px; margin-left:6px;
+    display:inline-block; letter-spacing:.01em; font-weight:500;
+  }
+  .w3w:hover{ text-decoration:underline; }
+  .stars{ font-size:13px; color:var(--amber); letter-spacing:1px; margin-top:5px; }
+  .stars .empty{ color:var(--line-2); }
+  .price{
+    font-family:var(--f-mono); font-weight:600; font-size:13px;
+    color:var(--ink); white-space:nowrap; text-align:right;
+  }
+  .price small{ display:block; font-weight:400; font-size:10px; color:var(--ink-soft); letter-spacing:.05em; }
+
+  .photos{
+    display:flex; gap:6px; padding:0 16px 12px; overflow-x:auto;
+  }
+  .photos img{
+    height:104px; width:auto; border-radius:8px; flex:none;
+    object-fit:cover; border:1px solid var(--line);
+  }
+  .card-body{ padding:0 16px 15px; }
+  .notes{ font-size:14px; margin:0 0 12px; color:#333c2c; }
+  .facilities{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; }
+  .fac{
+    font-family:var(--f-mono); font-size:11px; letter-spacing:.02em;
+    background:var(--surface-2); color:var(--pine);
+    border:1px solid var(--line); border-radius:5px; padding:3px 8px;
+  }
+  .card-foot{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:10px; flex-wrap:wrap;
+    border-top:1px dashed var(--line-2); padding-top:11px;
+  }
+  .contact{ font-size:13px; color:var(--ink-soft); display:flex; flex-wrap:wrap; gap:4px 14px; }
+  .contact a{ text-decoration:none; }
+  .contact a:hover{ text-decoration:underline; }
+  .added{
+    font-family:var(--f-mono); font-size:11px; color:var(--ink-soft);
+    letter-spacing:.02em;
+  }
+  .added b{ color:var(--pine); }
+
+  /* ---------- Modal ---------- */
+  .overlay{
+    position:fixed; inset:0; z-index:2000;
+    background:rgba(29,58,44,.5); backdrop-filter:blur(3px);
+    display:none; align-items:flex-start; justify-content:center;
+    padding:5vh 16px; overflow-y:auto;
+  }
+  .overlay.open{ display:flex; }
+  .modal{
+    background:var(--surface); border-radius:14px; width:100%; max-width:520px;
+    box-shadow:0 20px 60px rgba(0,0,0,.35); border:1px solid var(--line-2);
+  }
+  .modal-head{
+    padding:18px 20px 14px; border-bottom:1px solid var(--line);
+    display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+  }
+  .modal-head h2{ font-family:var(--f-display); font-weight:800; font-size:20px; margin:0; }
+  .modal-head p{ font-size:13px; color:var(--ink-soft); margin:4px 0 0; }
+  .close{
+    background:none; border:1px solid var(--line-2); border-radius:8px;
+    width:32px; height:32px; font-size:18px; color:var(--ink-soft); flex:none;
+  }
+  .modal-body{ padding:16px 20px 4px; }
+  .field{ margin-bottom:13px; }
+  .field label{
+    display:block; font-family:var(--f-mono); font-size:11px;
+    text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft);
+    margin-bottom:5px;
+  }
+  .field input, .field textarea, .field select{
+    width:100%; font-family:var(--f-body); font-size:14px; color:var(--ink);
+    background:var(--paper); border:1px solid var(--line-2);
+    border-radius:8px; padding:9px 11px; outline:none;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus{
+    border-color:var(--pine); box-shadow:0 0 0 3px rgba(47,90,68,.14);
+  }
+  .field textarea{ resize:vertical; min-height:64px; }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:11px; }
+  .modal-foot{
+    padding:14px 20px 20px; display:flex; gap:10px; align-items:center;
+    flex-wrap:wrap;
+  }
+  .submit{
+    background:var(--pine); color:var(--surface); border:none;
+    border-radius:8px; font-weight:600; font-size:14px; padding:11px 18px;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .submit:hover{ background:var(--pine-deep); }
+  .submit svg{ width:16px; height:16px; }
+  .modal-note{ font-size:12px; color:var(--ink-soft); flex:1; min-width:150px; }
+
+  /* ---------- Footer ---------- */
+  footer{
+    padding:30px clamp(14px,3vw,28px) 40px; border-top:1px solid var(--line);
+    background:var(--surface-2); font-size:13px; color:var(--ink-soft);
+  }
+  footer b{ color:var(--ink); }
+  footer code{
+    font-family:var(--f-mono); font-size:12px; background:var(--paper);
+    border:1px solid var(--line); border-radius:4px; padding:1px 5px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; }
+  }
+  :focus-visible{ outline:3px solid var(--amber); outline-offset:2px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="mark">LB</div>
+  <div class="brand">
+    <h1 id="siteTitle">The Layby Log</h1>
+    <p id="tagline">Places we've slept · a shared log</p>
+  </div>
+  <div class="header-spacer"></div>
+  <div class="count-pill"><b id="countNum">0</b> spots logged</div>
+  <button class="add-btn" id="openAdd">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+    Add a spot
+  </button>
+</header>
+
+<div class="controls">
+  <label class="search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg>
+    <input type="search" id="search" placeholder="Search name, place or notes…" aria-label="Search stopovers" />
+  </label>
+  <div class="chips" id="chips" role="group" aria-label="Filter by type"></div>
+</div>
+
+<div class="layout">
+  <div class="list" id="list"></div>
+  <div class="map-col"><div id="map"></div></div>
+</div>
+
+<footer>
+  <p style="margin:0 0 8px"><b>How this works.</b> Every spot below lives in one list at the top of <code>index.html</code>. Tap <b>Add a spot</b> to send me the details as a GitHub issue — I paste it into the list and it shows up here for everyone. No accounts, no database, fully free on GitHub Pages.</p>
+  <p style="margin:0">Map tiles © OpenStreetMap contributors. Photos on sample spots are placeholders — swap in real ones by putting an image URL in each entry.</p>
+</footer>
+
+<!-- Add-a-spot modal -->
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2 id="modalTitle">Log a stopover</h2>
+        <p>Fill this in and it opens a pre-filled GitHub issue to submit — takes one click.</p>
+      </div>
+      <button class="close" id="closeAdd" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label for="f-name">Name of the spot</label>
+        <input id="f-name" placeholder="e.g. The Ship Inn, Northumberland" />
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="f-type">Type</label>
+          <select id="f-type">
+            <option value="pub">Pub stopover</option>
+            <option value="campsite">Campsite</option>
+            <option value="free">Free spot</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-price">Price</label>
+          <input id="f-price" placeholder="Free · £14/night" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-place">Area / region</label>
+        <input id="f-place" placeholder="Peak District, England" />
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="f-lat">Latitude</label>
+          <input id="f-lat" placeholder="53.3665" inputmode="decimal" />
+        </div>
+        <div class="field">
+          <label for="f-lng">Longitude</label>
+          <input id="f-lng" placeholder="-1.8161" inputmode="decimal" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-w3w">what3words <span style="text-transform:none">(optional — the exact 3m square)</span></label>
+        <input id="f-w3w" placeholder="filled.count.soap" />
+      </div>
+      <div class="field">
+        <label for="f-notes">Notes / review</label>
+        <textarea id="f-notes" placeholder="What's it like? Quiet? Good for the night? Any catches?"></textarea>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="f-fac">Facilities <span style="text-transform:none">(comma-separated)</span></label>
+          <input id="f-fac" placeholder="water, waste, toilets, electric" />
+        </div>
+        <div class="field">
+          <label for="f-rating">Your rating (1–5)</label>
+          <input id="f-rating" type="number" min="1" max="5" placeholder="4" />
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="f-contact">Contact / website</label>
+          <input id="f-contact" placeholder="01433 … or https://…" />
+        </div>
+        <div class="field">
+          <label for="f-by">Your name</label>
+          <input id="f-by" placeholder="your name" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-photo">Photo URL <span style="text-transform:none">(optional)</span></label>
+        <input id="f-photo" placeholder="https://…/photo.jpg" />
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="submit" id="submitAdd">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5A11.5 11.5 0 0 0 8.4 22.9c.6.1.8-.25.8-.56v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.72.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 .18 1.6-.55 1.6-.55.1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.32 3.3 1.2a11.4 11.4 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.66.8.55A11.5 11.5 0 0 0 12 .5Z"/></svg>
+        Submit via GitHub
+      </button>
+      <span class="modal-note" id="repoNote"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   1) SETTINGS — edit these two lines.
+   ============================================================ */
+const CONFIG = {
+  siteTitle:  "The Layby Log",
+  tagline:    "UK camper van stopovers · a shared log",
+  githubRepo: "your-username/your-repo"   // <-- change to your GitHub repo
+};
+
+/* ============================================================
+   2) THE STOPOVERS — add, edit or remove entries here.
+      Each block is one spot. Copy one to make a new one.
+   ============================================================ */
+const STOPOVERS = [
+  {
+    name: "New Fold Farm",
+    type: "campsite",
+    place: "Edale, Peak District",
+    lat: 53.3665, lng: -1.8161,
+    price: "See website",
+    facilities: ["showers", "toilets", "walk to pub", "Pennine Way start"],
+    notes: "Working farm campsite in the middle of Edale village, right where the Pennine Way begins and under Kinder Scout. Steps from the Old Nag's Head. Great walking base — check the site for pitch types and whether vans/hookups are available.",
+    contact: { label: "newfoldfarmedale.com", href: "https://newfoldfarmedale.com/" },
+    addedBy: "",
+    photos: ["https://picsum.photos/seed/newfold1/400/300", "https://picsum.photos/seed/newfold2/400/300"]
+  },
+  {
+    name: "The Boat Inn",
+    type: "pub",
+    place: "Sprotbrough, South Yorkshire",
+    lat: 53.5183, lng: -1.1928,
+    price: "See website",
+    facilities: ["food", "real ale", "riverside", "car park"],
+    notes: "Vintage Inn pub-restaurant beside the River Don at Sprotbrough lock — pretty riverside spot with towpath walks. It's a chain dining pub rather than a known Brit Stop, so ring ahead and check whether they're happy for you to park overnight before relying on it.",
+    contact: { label: "vintageinn.co.uk", href: "https://www.vintageinn.co.uk/restaurants/yorkshire/theboatinnsprotbrough" },
+    addedBy: "",
+    photos: ["https://picsum.photos/seed/boatinn1/400/300"]
+  },
+  {
+    name: "Shell Island",
+    type: "campsite",
+    place: "Llanbedr, Gwynedd, Wales",
+    lat: 52.8137, lng: -4.1289,
+    price: "See website",
+    facilities: ["beach", "shop", "café", "bar", "showers", "tidal causeway"],
+    notes: "One of Europe's largest campsites, on a tidal peninsula near Llanbedr — no marked pitches, so pick your own spot among the dunes with sea views. The causeway floods at high tide, so plan arrivals and departures around the tide tables on their site.",
+    contact: { label: "shellisland.co.uk", href: "https://www.shellisland.co.uk/" },
+    addedBy: "",
+    photos: ["https://picsum.photos/seed/shell1/400/300", "https://picsum.photos/seed/shell2/400/300"]
+  }
+];
+
+/* ============================================================
+   3) App logic — no need to edit below.
+   ============================================================ */
+const TYPES = {
+  pub:      { label:"PUB",  ico:"🍺", color:"#b1531d" },
+  campsite: { label:"CAMP", ico:"⛺", color:"#3e7a5c" },
+  free:     { label:"FREE", ico:"🅿", color:"#5b6b8c" }
+};
+
+document.getElementById("siteTitle").textContent = CONFIG.siteTitle;
+document.getElementById("tagline").textContent = CONFIG.tagline;
+document.getElementById("countNum").textContent = STOPOVERS.length;
+document.getElementById("repoNote").innerHTML =
+  'Goes to <code style="font-family:var(--f-mono)">' + CONFIG.githubRepo + '</code>';
+
+let activeType = "all";
+let query = "";
+let activeIdx = null;
+
+/* ---- Map ---- */
+const map = L.map("map", { scrollWheelZoom:true }).setView([54.5, -3.5], 5);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  maxZoom: 19,
+  attribution: '© OpenStreetMap'
+}).addTo(map);
+
+const markers = [];
+STOPOVERS.forEach((s, i) => {
+  const t = TYPES[s.type] || TYPES.free;
+  const icon = L.divIcon({
+    className: "",
+    html: `<div class="pin" data-idx="${i}" style="background:${t.color}"><span>${t.ico}</span></div>`,
+    iconSize: [26, 26], iconAnchor: [13, 26], popupAnchor: [0, -24]
+  });
+  const m = L.marker([s.lat, s.lng], { icon }).addTo(map);
+  m.bindPopup(
+    `<strong>${escapeHtml(s.name)}</strong><br>${escapeHtml(s.place)} · ${escapeHtml(s.price)}`
+  );
+  m.on("click", () => focusCard(i));
+  markers.push(m);
+});
+fitMarkers();
+
+function fitMarkers(){
+  const shown = markers.filter((_, i) => passesFilter(STOPOVERS[i]));
+  if (!shown.length) return;
+  const group = L.featureGroup(shown);
+  map.fitBounds(group.getBounds().pad(0.25), { maxZoom: 11 });
+}
+
+/* ---- Filter chips ---- */
+const chipsEl = document.getElementById("chips");
+const chipDefs = [["all","All"], ["pub","Pub stops"], ["campsite","Campsites"], ["free","Free"]];
+chipDefs.forEach(([val, label]) => {
+  const b = document.createElement("button");
+  b.className = "chip"; b.textContent = label;
+  b.setAttribute("aria-pressed", val === "all");
+  b.onclick = () => {
+    activeType = val;
+    [...chipsEl.children].forEach(c => c.setAttribute("aria-pressed", "false"));
+    b.setAttribute("aria-pressed", "true");
+    render();
+  };
+  chipsEl.appendChild(b);
+});
+
+document.getElementById("search").addEventListener("input", e => {
+  query = e.target.value.toLowerCase().trim();
+  render();
+});
+
+function passesFilter(s){
+  if (activeType !== "all" && s.type !== activeType) return false;
+  if (query){
+    const hay = (s.name + " " + s.place + " " + s.notes).toLowerCase();
+    if (!hay.includes(query)) return false;
+  }
+  return true;
+}
+
+/* ---- Render list ---- */
+const listEl = document.getElementById("list");
+
+function stars(n){
+  n = Math.round(n || 0);
+  let out = "";
+  for (let i = 1; i <= 5; i++) out += i <= n ? "★" : '<span class="empty">★</span>';
+  return out;
+}
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, c =>
+    ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+}
+
+function render(){
+  listEl.innerHTML = "";
+  const shown = STOPOVERS.map((s, i) => ({ s, i })).filter(x => passesFilter(x.s));
+
+  if (!shown.length){
+    listEl.innerHTML = '<div class="list-empty">No spots match that. Clear the search or pick a different type.</div>';
+  }
+
+  shown.forEach(({ s, i }) => {
+    const t = TYPES[s.type] || TYPES.free;
+    const card = document.createElement("article");
+    card.className = "card" + (activeIdx === i ? " active" : "");
+    card.id = "card-" + i;
+
+    const photos = (s.photos || []).map(p =>
+      `<img src="${escapeHtml(p)}" alt="${escapeHtml(s.name)}" loading="lazy" onerror="this.remove()">`).join("");
+    const facs = (s.facilities || []).map(f => `<span class="fac">${escapeHtml(f)}</span>`).join("");
+    const contact = s.contact && s.contact.label
+      ? (s.contact.href
+          ? `<a href="${escapeHtml(s.contact.href)}" target="_blank" rel="noopener">${escapeHtml(s.contact.label)}</a>`
+          : escapeHtml(s.contact.label))
+      : "—";
+
+    card.innerHTML = `
+      <div class="card-head">
+        <div class="shield" style="background:${t.color}">
+          <span class="ico">${t.ico}</span>${t.label}
+        </div>
+        <div class="card-head-main">
+          <h3 class="card-title">${escapeHtml(s.name)}</h3>
+          <p class="card-place">${escapeHtml(s.place)}</p>
+          <span class="coords">${s.lat.toFixed(4)}, ${s.lng.toFixed(4)}</span>
+          ${s.w3w ? `<a class="w3w" href="https://what3words.com/${escapeHtml(s.w3w)}" target="_blank" rel="noopener" title="Open in what3words">///${escapeHtml(s.w3w)}</a>` : ""}
+          <div class="stars" aria-label="${s.rating || 0} out of 5">${stars(s.rating)}</div>
+        </div>
+        <div class="price">${escapeHtml(s.price || "")}<small>per night</small></div>
+      </div>
+      ${photos ? `<div class="photos">${photos}</div>` : ""}
+      <div class="card-body">
+        <p class="notes">${escapeHtml(s.notes || "")}</p>
+        ${facs ? `<div class="facilities">${facs}</div>` : ""}
+        <div class="card-foot">
+          <div class="contact"><span>📞 ${contact}</span></div>
+          <div class="added">logged by <b>${escapeHtml(s.addedBy || "—")}</b></div>
+        </div>
+      </div>`;
+
+    card.addEventListener("click", () => focusCard(i, true));
+    listEl.appendChild(card);
+  });
+
+  markers.forEach((m, i) => {
+    m.setOpacity(passesFilter(STOPOVERS[i]) ? 1 : 0.25);
+  });
+  fitMarkers();
+}
+
+function focusCard(i, fromCard){
+  activeIdx = i;
+  render();
+  const s = STOPOVERS[i];
+  map.flyTo([s.lat, s.lng], Math.max(map.getZoom(), 10), { duration: 0.6 });
+  markers[i].openPopup();
+  if (fromCard) return;
+  const el = document.getElementById("card-" + i);
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+/* ---- Add-a-spot modal ---- */
+const overlay = document.getElementById("overlay");
+const openModal = () => { overlay.classList.add("open"); document.getElementById("f-name").focus(); };
+const closeModal = () => overlay.classList.remove("open");
+document.getElementById("openAdd").onclick = openModal;
+document.getElementById("closeAdd").onclick = closeModal;
+overlay.addEventListener("click", e => { if (e.target === overlay) closeModal(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+
+document.getElementById("submitAdd").onclick = () => {
+  const g = id => document.getElementById(id).value.trim();
+  const name = g("f-name") || "Untitled spot";
+  const title = "New stopover: " + name;
+
+  const body =
+`**Name:** ${name}
+**Type:** ${g("f-type")}
+**Area / region:** ${g("f-place")}
+**Coordinates:** ${g("f-lat")}, ${g("f-lng")}
+**what3words:** ${g("f-w3w")}
+**Price:** ${g("f-price")}
+**Rating (1-5):** ${g("f-rating")}
+**Facilities:** ${g("f-fac")}
+**Contact / website:** ${g("f-contact")}
+**Photo URL:** ${g("f-photo")}
+**Added by:** ${g("f-by")}
+
+**Notes / review:**
+${g("f-notes")}
+
+---
+_Ready-to-paste entry for index.html:_
+\`\`\`js
+  {
+    name: "${name}",
+    type: "${g("f-type")}",
+    place: "${g("f-place")}",
+    lat: ${g("f-lat") || 0}, lng: ${g("f-lng") || 0},
+    w3w: "${g("f-w3w").replace(/^\/+/, "")}",
+    price: "${g("f-price")}",
+    rating: ${g("f-rating") || 0},
+    facilities: [${g("f-fac").split(",").map(x => '"' + x.trim() + '"').filter(x => x !== '""').join(", ")}],
+    notes: "${g("f-notes").replace(/"/g, "'")}",
+    contact: { label: "${g("f-contact")}", href: "${g("f-contact").startsWith("http") || g("f-contact").startsWith("tel") ? g("f-contact") : ""}" },
+    addedBy: "${g("f-by")}",
+    photos: [${g("f-photo") ? '"' + g("f-photo") + '"' : ""}]
+  },
+\`\`\``;
+
+  const url = "https://github.com/" + CONFIG.githubRepo +
+    "/issues/new?title=" + encodeURIComponent(title) +
+    "&body=" + encodeURIComponent(body);
+  window.open(url, "_blank", "noopener");
+};
+
+render();
+</script>
+</body>
+</html>
