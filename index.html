@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>The Layby Log — camper van stopovers</title>
+<title>Campervan Stopovers</title>
 
 <!-- Leaflet (map) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
@@ -322,6 +322,20 @@
   .submit:hover{ background:var(--pine-deep); }
   .submit svg{ width:16px; height:16px; }
   .modal-note{ font-size:12px; color:var(--ink-soft); flex:1; min-width:150px; }
+  .result{ padding:0 20px 20px; }
+  .result-msg{ font-size:13px; font-weight:600; color:var(--pine); margin:0 0 8px; }
+  #resultText{
+    width:100%; font-family:var(--f-mono); font-size:12px; line-height:1.5;
+    color:var(--ink); background:var(--paper);
+    border:1px solid var(--line-2); border-radius:8px; padding:10px 12px;
+    resize:vertical; outline:none;
+  }
+  #resultText:focus{ border-color:var(--pine); box-shadow:0 0 0 3px rgba(47,90,68,.14); }
+  .copy-btn{
+    margin-top:10px; background:var(--pine); color:var(--surface); border:none;
+    border-radius:8px; font-weight:600; font-size:13px; padding:9px 15px;
+  }
+  .copy-btn:hover{ background:var(--pine-deep); }
 
   /* ---------- Footer ---------- */
   footer{
@@ -366,10 +380,10 @@
 <body>
 
 <header>
-  <div class="mark">LB</div>
+  <div class="mark">CS</div>
   <div class="brand">
-    <h1 id="siteTitle">The Layby Log</h1>
-    <p id="tagline">Places we've slept · a shared log</p>
+    <h1 id="siteTitle">Campervan Stopovers</h1>
+    <p id="tagline">Pub stops · campsites · free spots</p>
   </div>
   <div class="header-spacer"></div>
   <div class="count-pill"><b id="countNum">0</b> spots logged</div>
@@ -397,9 +411,9 @@
 </div>
 
 <footer>
-  <p style="margin:0 0 8px"><b>How this works.</b> Every spot below lives in one list at the top of <code>index.html</code>. Tap <b>Add a spot</b> to send me the details as a GitHub issue — I paste it into the list and it shows up here for everyone. No accounts, no database, fully free on GitHub Pages.</p>
+  <p style="margin:0 0 8px"><b>How this works.</b> Every spot lives in <code>spots.js</code>. Tap <b>Add a spot</b>, fill it in, and you'll get a ready-made text block to copy and send to the owner — no account or login needed. The owner pastes it into the list and it shows up here for everyone.</p>
   <p style="margin:0">Map tiles © OpenStreetMap contributors. Photos on sample spots are placeholders — swap in real ones by putting an image URL in each entry.</p>
-  <p style="margin:14px 0 0; font-family:'Spline Sans Mono',monospace; font-size:11px; letter-spacing:.06em; color:var(--ink-soft);">The Layby Log · <span id="verFooter">v0.0</span> — tap ⟳ in the header to pull the latest.</p>
+  <p style="margin:14px 0 0; font-family:'Spline Sans Mono',monospace; font-size:11px; letter-spacing:.06em; color:var(--ink-soft);">Campervan Stopovers · <span id="verFooter">v0.0</span> — tap ⟳ in the header to pull the latest.</p>
 </footer>
 
 <!-- Add-a-spot modal -->
@@ -480,81 +494,37 @@
     </div>
     <div class="modal-foot">
       <button class="submit" id="submitAdd">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5A11.5 11.5 0 0 0 8.4 22.9c.6.1.8-.25.8-.56v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.72.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 .18 1.6-.55 1.6-.55.1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.32 3.3 1.2a11.4 11.4 0 0 1 6 0C17 4.7 18 5 18 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.66.8.55A11.5 11.5 0 0 0 12 .5Z"/></svg>
-        Submit via GitHub
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy entry text
       </button>
-      <span class="modal-note" id="repoNote"></span>
+      <span class="modal-note">No GitHub or login needed — you'll get text to send on.</span>
+    </div>
+    <div class="result" id="result" hidden>
+      <p class="result-msg" id="resultMsg"></p>
+      <textarea id="resultText" readonly rows="9" aria-label="Your spot as text to send"></textarea>
+      <button class="copy-btn" id="copyAgain">Copy again</button>
     </div>
   </div>
 </div>
 
+<!-- Your spots live in spots.js, so code updates here never overwrite them -->
+<script src="spots.js"></script>
+
 <script>
 /* ============================================================
-   1) SETTINGS — edit these two lines.
+   1) SETTINGS — site options.
    ============================================================ */
 const CONFIG = {
-  siteTitle:  "The Layby Log",
-  tagline:    "UK camper van stopovers · a shared log",
-  version:    "1.0.2",                     // bump this each time you update the spots
-  githubRepo: "jamesc179/campsitestopovers"  // your GitHub repo
+  siteTitle:  "Campervan Stopovers",
+  tagline:    "Pub stops · campsites · free spots",
+  ownerName:  "James",                       // shown to friends when they submit a spot
+  version:    "1.0.3",                       // code version (bump when you change index.html)
+  githubRepo: "jamesc179/campsitestopovers"  // (kept for reference; not used for submissions)
 };
 
-/* ============================================================
-   2) THE STOPOVERS — add, edit or remove entries here.
-      Each block is one spot. Copy one to make a new one.
-   ============================================================ */
-const STOPOVERS = [
-    {
-    name: "Clockhouse Inn",
-    type: "pub",
-    place: "Derby",
-    lat: 52.869165, lng: -1.339387,
-    w3w: "stocks.sprouted.bombard",
-    price: "Free",
-    rating: 4,
-    facilities: ["No facilities when pub is shut"],
-    notes: "Good car park, nice walk down the canal, dog friendly",
-    contact: { label: "https://www.clockwarehousepub.co.uk/", href: "https://www.clockwarehousepub.co.uk/" },
-    addedBy: "James C",
-    photos: []
-  },
-  {
-    name: "New Fold Farm",
-    type: "campsite",
-    place: "Edale, Peak District",
-    lat: 53.3665, lng: -1.8161,
-    price: "See website",
-    facilities: ["showers", "toilets", "walk to pub", "Pennine Way start"],
-    notes: "Working farm campsite in the middle of Edale village, right where the Pennine Way begins and under Kinder Scout. Steps from the Old Nag's Head. Great walking base — check the site for pitch types and whether vans/hookups are available.",
-    contact: { label: "newfoldfarmedale.com", href: "https://newfoldfarmedale.com/" },
-    addedBy: "James C",
-    photos: ["https://picsum.photos/seed/newfold1/400/300", "https://picsum.photos/seed/newfold2/400/300"]
-  },
-  {
-    name: "The Boat Inn",
-    type: "pub",
-    place: "Sprotbrough, South Yorkshire",
-    lat: 53.5183, lng: -1.1928,
-    price: "See website",
-    facilities: ["food", "real ale", "riverside", "car park"],
-    notes: "Vintage Inn pub-restaurant beside the River Don at Sprotbrough lock — pretty riverside spot with towpath walks. It's a chain dining pub rather than a known Brit Stop, so ring ahead and check whether they're happy for you to park overnight before relying on it.",
-    contact: { label: "vintageinn.co.uk", href: "https://www.vintageinn.co.uk/restaurants/yorkshire/theboatinnsprotbrough" },
-    addedBy: "",
-    photos: ["https://picsum.photos/seed/boatinn1/400/300"]
-  },
-  {
-    name: "Shell Island",
-    type: "campsite",
-    place: "Llanbedr, Gwynedd, Wales",
-    lat: 52.8137, lng: -4.1289,
-    price: "See website",
-    facilities: ["beach", "shop", "café", "bar", "showers", "tidal causeway"],
-    notes: "One of Europe's largest campsites, on a tidal peninsula near Llanbedr — no marked pitches, so pick your own spot among the dunes with sea views. The causeway floods at high tide, so plan arrivals and departures around the tide tables on their site.",
-    contact: { label: "shellisland.co.uk", href: "https://www.shellisland.co.uk/" },
-    addedBy: "",
-    photos: ["https://picsum.photos/seed/shell1/400/300", "https://picsum.photos/seed/shell2/400/300"]
-  }
-];
+// Spots are loaded from spots.js (window.STOPOVERS). Fail softly if it's missing.
+const SPOTS_LOADED = Array.isArray(window.STOPOVERS);
+const STOPOVERS = SPOTS_LOADED ? window.STOPOVERS : [];
 
 /* ============================================================
    3) App logic — no need to edit below.
@@ -570,8 +540,6 @@ document.getElementById("tagline").textContent = CONFIG.tagline;
 document.getElementById("countNum").textContent = STOPOVERS.length;
 document.getElementById("verTag").textContent = "v" + CONFIG.version;
 document.getElementById("verFooter").textContent = "v" + CONFIG.version;
-document.getElementById("repoNote").innerHTML =
-  'Goes to <code style="font-family:var(--f-mono)">' + CONFIG.githubRepo + '</code>';
 
 /* Refresh button — forces a fresh copy past the browser cache */
 document.getElementById("refreshBtn").addEventListener("click", (e) => {
@@ -663,7 +631,9 @@ function render(){
   const shown = STOPOVERS.map((s, i) => ({ s, i })).filter(x => passesFilter(x.s));
 
   if (!shown.length){
-    listEl.innerHTML = '<div class="list-empty">No spots match that. Clear the search or pick a different type.</div>';
+    listEl.innerHTML = SPOTS_LOADED
+      ? '<div class="list-empty">No spots match that. Clear the search or pick a different type.</div>'
+      : '<div class="list-empty">Couldn\'t load <b>spots.js</b>. Make sure the file <code>spots.js</code> is uploaded in the same folder as <code>index.html</code> (same spelling, lower-case).</div>';
   }
 
   shown.forEach(({ s, i }) => {
@@ -743,65 +713,61 @@ document.getElementById("closeAdd").onclick = closeModal;
 overlay.addEventListener("click", e => { if (e.target === overlay) closeModal(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
 
-document.getElementById("submitAdd").onclick = () => {
+function buildEntry(){
   const g = id => document.getElementById(id).value.trim();
+  const q = s => s.replace(/"/g, "'");                       // keep quotes from breaking the JS
   const name = g("f-name") || "Untitled spot";
-  const title = "New stopover: " + name;
+  const contactVal = g("f-contact");
+  const contactHref = (contactVal.startsWith("http") || contactVal.startsWith("tel")) ? contactVal : "";
+  const facs = g("f-fac").split(",").map(x => '"' + q(x.trim()) + '"').filter(x => x !== '""').join(", ");
 
-  const body =
-`**Name:** ${name}
-**Type:** ${g("f-type")}
-**Area / region:** ${g("f-place")}
-**Coordinates:** ${g("f-lat")}, ${g("f-lng")}
-**what3words:** ${g("f-w3w")}
-**Price:** ${g("f-price")}
-**Rating (1-5):** ${g("f-rating")}
-**Facilities:** ${g("f-fac")}
-**Contact / website:** ${g("f-contact")}
-**Photo URL:** ${g("f-photo")}
-**Added by:** ${g("f-by")}
-
-**Notes / review:**
-${g("f-notes")}
-
----
-_Ready-to-paste entry for index.html:_
-\`\`\`js
-  {
-    name: "${name}",
+  return (
+`  {
+    name: "${q(name)}",
     type: "${g("f-type")}",
-    place: "${g("f-place")}",
+    place: "${q(g("f-place"))}",
     lat: ${g("f-lat") || 0}, lng: ${g("f-lng") || 0},
     w3w: "${g("f-w3w").replace(/^\/+/, "")}",
-    price: "${g("f-price")}",
+    price: "${q(g("f-price"))}",
     rating: ${g("f-rating") || 0},
-    facilities: [${g("f-fac").split(",").map(x => '"' + x.trim() + '"').filter(x => x !== '""').join(", ")}],
-    notes: "${g("f-notes").replace(/"/g, "'")}",
-    contact: { label: "${g("f-contact")}", href: "${g("f-contact").startsWith("http") || g("f-contact").startsWith("tel") ? g("f-contact") : ""}" },
-    addedBy: "${g("f-by")}",
+    facilities: [${facs}],
+    notes: "${q(g("f-notes"))}",
+    contact: { label: "${q(contactVal)}", href: "${contactHref}" },
+    addedBy: "${q(g("f-by"))}",
     photos: [${g("f-photo") ? '"' + g("f-photo") + '"' : ""}]
-  },
-\`\`\``;
+  },`
+  );
+}
 
-  const repo = (CONFIG.githubRepo || "").trim();
-  const repoUnset = repo.indexOf("/") === -1 || /your-username|your-repo/i.test(repo);
-  if (repoUnset){
-    if (navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(body).catch(() => {});
-    }
-    alert(
-      "GitHub isn't linked yet, so there's nowhere to send this.\n\n" +
-      "Open index.html and set CONFIG.githubRepo to your repository — " +
-      "for example \"jane/layby-log\" — then push it to GitHub.\n\n" +
-      "For now, this spot's details have been copied to your clipboard."
-    );
-    return;
+function copyText(text){
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    return navigator.clipboard.writeText(text);
   }
+  const ta = document.getElementById("resultText");
+  ta.focus(); ta.select();
+  try { document.execCommand("copy"); return Promise.resolve(); }
+  catch (e) { return Promise.reject(e); }
+}
 
-  const url = "https://github.com/" + repo +
-    "/issues/new?title=" + encodeURIComponent(title) +
-    "&body=" + encodeURIComponent(body);
-  window.open(url, "_blank", "noopener");
+document.getElementById("submitAdd").onclick = () => {
+  const entry = buildEntry();
+  const ta = document.getElementById("resultText");
+  const msg = document.getElementById("resultMsg");
+  ta.value = entry;
+  document.getElementById("result").hidden = false;
+
+  copyText(entry)
+    .then(() => { msg.textContent = "✓ Copied. Send this text to " + CONFIG.ownerName + " and they'll add your spot."; })
+    .catch(() => { msg.textContent = "Select the text below, copy it, and send it to " + CONFIG.ownerName + " to add."; });
+
+  ta.scrollIntoView({ behavior: "smooth", block: "nearest" });
+};
+
+document.getElementById("copyAgain").onclick = () => {
+  const ta = document.getElementById("resultText");
+  copyText(ta.value)
+    .then(() => { document.getElementById("resultMsg").textContent = "✓ Copied again."; })
+    .catch(() => {});
 };
 
 render();
