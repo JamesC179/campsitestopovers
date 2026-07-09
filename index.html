@@ -72,10 +72,12 @@
     font-family:var(--f-mono); font-weight:600; font-size:13px;
     transform:rotate(-4deg);
   }
+  .brand{ min-width:0; }
   .brand h1{
     font-family:var(--f-display); font-weight:800;
     font-size:clamp(17px,2.4vw,22px); letter-spacing:-.01em;
     margin:0; line-height:1;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
   .brand p{
     margin:2px 0 0; font-family:var(--f-mono); font-size:11px;
@@ -93,6 +95,7 @@
     background:var(--amber); color:var(--pine-deep);
     border:none; border-radius:8px; font-weight:600; font-size:14px;
     padding:9px 15px; display:inline-flex; align-items:center; gap:7px;
+    white-space:nowrap; flex:none;
     transition:transform .12s ease, background .12s ease;
   }
   .add-btn:hover{ transform:translateY(-1px); background:#e6a53f; }
@@ -153,7 +156,7 @@
   .map-col{
     order:-1;
     position:sticky; top:calc(var(--header-h) + 53px);
-    height:44vh;
+    height:40vh;
     border-bottom:1px solid var(--line);
   }
   @media(min-width:920px){
@@ -316,6 +319,28 @@
     border:1px solid var(--line); border-radius:4px; padding:1px 5px;
   }
 
+  .chev{ display:none; font-size:13px; color:var(--ink-soft); align-self:center; flex:none; transition:transform .2s ease; }
+
+  /* ---- Mobile: slim header, tap-to-expand cards ---- */
+  @media (max-width:600px){
+    .brand p{ display:none; }              /* tagline off on small screens */
+    .count-pill{ display:none; }           /* count lives in the header area only on wider screens */
+    .add-btn{ padding:8px 12px; font-size:13px; }
+    .mark{ display:none; }
+  }
+  @media (max-width:919px){
+    .card .details{ display:none; }        /* photos + notes hidden until tapped */
+    .card.active .details{ display:block; }
+    .card-head{ cursor:pointer; }
+    .chev{ display:block; }
+    .card.active .chev{ transform:rotate(180deg); }
+    .card-head-hint{ display:block; }
+  }
+  .card-head-hint{
+    display:none; font-family:var(--f-mono); font-size:10px;
+    letter-spacing:.05em; color:var(--ink-soft); margin-top:7px;
+  }
+
   @media (prefers-reduced-motion: reduce){
     *{ transition:none !important; }
   }
@@ -392,11 +417,11 @@
       <div class="row2">
         <div class="field">
           <label for="f-lat">Latitude</label>
-          <input id="f-lat" placeholder="53.3665" inputmode="decimal" />
+          <input id="f-lat" placeholder="53.3665" inputmode="text" autocapitalize="off" autocomplete="off" />
         </div>
         <div class="field">
           <label for="f-lng">Longitude</label>
-          <input id="f-lng" placeholder="-1.8161" inputmode="decimal" />
+          <input id="f-lng" placeholder="-1.8161" inputmode="text" autocapitalize="off" autocomplete="off" />
         </div>
       </div>
       <div class="field">
@@ -623,20 +648,28 @@ function render(){
           <span class="coords">${s.lat.toFixed(4)}, ${s.lng.toFixed(4)}</span>
           ${s.w3w ? `<a class="w3w" href="https://what3words.com/${escapeHtml(s.w3w)}" target="_blank" rel="noopener" title="Open in what3words">///${escapeHtml(s.w3w)}</a>` : ""}
           <div class="stars" aria-label="${s.rating || 0} out of 5">${stars(s.rating)}</div>
+          <span class="card-head-hint">${activeIdx === i ? "tap to collapse" : "tap for photos & details"}</span>
         </div>
         <div class="price">${escapeHtml(s.price || "")}<small>per night</small></div>
+        <span class="chev" aria-hidden="true">▾</span>
       </div>
-      ${photos ? `<div class="photos">${photos}</div>` : ""}
-      <div class="card-body">
-        <p class="notes">${escapeHtml(s.notes || "")}</p>
-        ${facs ? `<div class="facilities">${facs}</div>` : ""}
-        <div class="card-foot">
-          <div class="contact"><span>📞 ${contact}</span></div>
-          <div class="added">logged by <b>${escapeHtml(s.addedBy || "—")}</b></div>
+      <div class="details">
+        ${photos ? `<div class="photos">${photos}</div>` : ""}
+        <div class="card-body">
+          <p class="notes">${escapeHtml(s.notes || "")}</p>
+          ${facs ? `<div class="facilities">${facs}</div>` : ""}
+          <div class="card-foot">
+            <div class="contact"><span>📞 ${contact}</span></div>
+            <div class="added">logged by <b>${escapeHtml(s.addedBy || "—")}</b></div>
+          </div>
         </div>
       </div>`;
 
-    card.addEventListener("click", () => focusCard(i, true));
+    card.addEventListener("click", (e) => {
+      if (e.target.closest("a")) return;        // let links (w3w, contact) work normally
+      if (activeIdx === i) { activeIdx = null; render(); }
+      else focusCard(i, true);
+    });
     listEl.appendChild(card);
   });
 
