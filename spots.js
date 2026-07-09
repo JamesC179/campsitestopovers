@@ -29,7 +29,7 @@ window.STOPOVERS = [
     notes: "Working farm campsite in the middle of Edale village, right where the Pennine Way begins and under Kinder Scout. Steps from the Old Nag's Head. Great walking base — check the site for pitch types and whether vans/hookups are available.",
     contact: { label: "newfoldfarmedale.com", href: "https://newfoldfarmedale.com/" },
     addedBy: "James C",
-    photos: ["https://picsum.photos/seed/newfold1/400/300", "https://picsum.photos/seed/newfold2/400/300"]
+    photos: []
   },
   {
     name: "The Boat Inn",
@@ -41,7 +41,7 @@ window.STOPOVERS = [
     notes: "Vintage Inn pub-restaurant beside the River Don at Sprotbrough lock — pretty riverside spot with towpath walks. It's a chain dining pub rather than a known Brit Stop, so ring ahead and check whether they're happy for you to park overnight before relying on it.",
     contact: { label: "vintageinn.co.uk", href: "https://www.vintageinn.co.uk/restaurants/yorkshire/theboatinnsprotbrough" },
     addedBy: "",
-    photos: ["https://picsum.photos/seed/boatinn1/400/300"]
+    photos: []
   },
   {
     name: "Shell Island",
@@ -53,6 +53,6 @@ window.STOPOVERS = [
     notes: "One of Europe's largest campsites, on a tidal peninsula near Llanbedr — no marked pitches, so pick your own spot among the dunes with sea views. The causeway floods at high tide, so plan arrivals and departures around the tide tables on their site.",
     contact: { label: "shellisland.co.uk", href: "https://www.shellisland.co.uk/" },
     addedBy: "",
-    photos: ["https://picsum.photos/seed/shell1/400/300", "https://picsum.photos/seed/shell2/400/300"]
+    photos: ["https://walesdmsmedia.newmindmedia.com/wsimgs/D373E32580139E9BA913945055DF654B3510427C.jpg"]
   }
 ];
