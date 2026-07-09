@@ -495,8 +495,8 @@
 const CONFIG = {
   siteTitle:  "The Layby Log",
   tagline:    "UK camper van stopovers · a shared log",
-  version:    "1.0.0",                     // bump this each time you update the spots
-  githubRepo: "your-username/your-repo"    // <-- change to your GitHub repo
+  version:    "1.0.1",                     // bump this each time you update the spots
+  githubRepo: "jamesc179/campsitestopovers"  // your GitHub repo
 };
 
 /* ============================================================
@@ -769,7 +769,22 @@ _Ready-to-paste entry for index.html:_
   },
 \`\`\``;
 
-  const url = "https://github.com/" + CONFIG.githubRepo +
+  const repo = (CONFIG.githubRepo || "").trim();
+  const repoUnset = repo.indexOf("/") === -1 || /your-username|your-repo/i.test(repo);
+  if (repoUnset){
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(body).catch(() => {});
+    }
+    alert(
+      "GitHub isn't linked yet, so there's nowhere to send this.\n\n" +
+      "Open index.html and set CONFIG.githubRepo to your repository — " +
+      "for example \"jane/layby-log\" — then push it to GitHub.\n\n" +
+      "For now, this spot's details have been copied to your clipboard."
+    );
+    return;
+  }
+
+  const url = "https://github.com/" + repo +
     "/issues/new?title=" + encodeURIComponent(title) +
     "&body=" + encodeURIComponent(body);
   window.open(url, "_blank", "noopener");
