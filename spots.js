@@ -15,9 +15,9 @@ window.STOPOVERS = [
     rating: 4,
     facilities: ["No facilities when the pub is shut"],
     notes: "Nice pub with a separate area for vans. Also nice walk to Rutland water. Must book ahead.",
-    contact: { label: "01572 827948", href: "" },
+    contact: { label: "01572 827948 twistedtrout.co.uk/", href: "https://twistedtrout.co.uk/" },
     addedBy: "James C",
-    photos: []
+    photos: [https://www.lincsonline.co.uk/_media/img/M0ZQ0M3B2EVKTX140QDC.jpg https://twistedtrout.co.uk/wp-content/uploads/2026/06/Farmyard-Burger-1.jpeg ]
   },
     {
     name: "Clockhouse Inn",
