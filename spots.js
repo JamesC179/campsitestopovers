@@ -5,6 +5,20 @@
    Then commit. You never need to touch index.html for this.
    ============================================================ */
 window.STOPOVERS = [
+   {
+    name: "Twisted Trout",
+    type: "pub",
+    place: "Rutland",
+    lat: 52.667078, lng: -0.599035,
+    w3w: "Ushering.point.mercy",
+    price: "Free",
+    rating: 4,
+    facilities: ["No facilities when the pub is shut"],
+    notes: "Nice pub with a separate area for vans. Also nice walk to Rutland water. Must book ahead.",
+    contact: { label: "01572 827948", href: "" },
+    addedBy: "James C",
+    photos: []
+  },
     {
     name: "Clockhouse Inn",
     type: "pub",
