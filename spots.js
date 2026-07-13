@@ -81,6 +81,6 @@ window.STOPOVERS = [
     notes: "One of Europe's largest campsites, on a tidal peninsula near Llanbedr — no marked pitches, so pick your own spot among the dunes with sea views. The causeway floods at high tide, so plan arrivals and departures around the tide tables on their site.",
     contact: { label: "shellisland.co.uk", href: "https://www.shellisland.co.uk/" },
     addedBy: "",
-    photos: ["https://walesdmsmedia.newmindmedia.com/wsimgs/D373E32580139E9BA913945055DF654B3510427C.jpg","images/shell_sunset.jpg"]
+    photos: ["https://walesdmsmedia.newmindmedia.com/wsimgs/D373E32580139E9BA913945055DF654B3510427C.jpg","https://jamesc179.github.io/campsitestopovers/images/shell_sunset.jpeg"]
   }
 ];
