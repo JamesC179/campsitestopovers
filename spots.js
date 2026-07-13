@@ -51,7 +51,7 @@ window.STOPOVERS = [
     place: "Sprotbrough, South Yorkshire",
     lat: 53.5183, lng: -1.1928,
     price: "See website",
-    facilities: ["food", "real ale", "riverside", "car park"],
+    facilities: ["food", "real ale", "riverside", "car park","Breakfast", "No facilities when pub is shut"],
     notes: "Vintage Inn pub-restaurant beside the River Don at Sprotbrough lock — pretty riverside spot with towpath walks. It's a chain dining pub rather than a known Brit Stop, so ring ahead and check whether they're happy for you to park overnight before relying on it.",
     contact: { label: "vintageinn.co.uk", href: "https://www.vintageinn.co.uk/restaurants/yorkshire/theboatinnsprotbrough" },
     addedBy: "",
