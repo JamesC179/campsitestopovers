@@ -168,6 +168,7 @@
   }
 
   /* map column */
+  .tabs{ display:none; }
   .map-col{
     order:-1;
     position:sticky; top:calc(var(--header-h) + 53px);
@@ -365,6 +366,27 @@
     .chev{ display:block; }
     .card.active .chev{ transform:rotate(180deg); }
     .card-head-hint{ display:block; }
+
+    /* --- Map / List tabs replace the split view on mobile --- */
+    .tabs{
+      display:flex; position:sticky; top:var(--header-h); z-index:850;
+      background:var(--pine-deep); border-bottom:1px solid rgba(244,241,231,.15);
+    }
+    .tab{
+      flex:1; height:44px; border:none; background:transparent;
+      color:rgba(244,241,231,.65);
+      font-family:var(--f-mono); font-size:13px; letter-spacing:.06em;
+      border-bottom:2px solid transparent;
+    }
+    .tab.active{ color:var(--paper); border-bottom-color:var(--amber); }
+
+    .controls{ top:calc(var(--header-h) + 44px); }
+    .map-col{ position:static; order:0; height:auto; border:none; }
+    #map{ height:calc(100dvh - 106px); min-height:320px; }
+
+    body[data-tab="list"] .map-col{ display:none; }
+    body[data-tab="map"]  .list{ display:none; }
+    body[data-tab="map"]  .controls{ display:none; }   /* search isn't needed on the map */
   }
   .card-head-hint{
     display:none; font-family:var(--f-mono); font-size:10px;
@@ -396,6 +418,11 @@
     Add a spot
   </button>
 </header>
+
+<div class="tabs" id="tabs" role="tablist" aria-label="View">
+  <button class="tab active" id="tabList" role="tab" aria-selected="true">List</button>
+  <button class="tab" id="tabMap" role="tab" aria-selected="false">Map</button>
+</div>
 
 <div class="controls">
   <label class="search">
@@ -547,6 +574,27 @@ document.getElementById("refreshBtn").addEventListener("click", (e) => {
   location.replace(location.pathname + "?r=" + Date.now() + location.hash);
 });
 
+/* ---- Mobile Map / List tabs ---- */
+const isMobile = () => window.matchMedia("(max-width:919px)").matches;
+let mapEverShown = false;
+function setTab(name){
+  document.body.dataset.tab = name;
+  const onMap = name === "map";
+  const tMap = document.getElementById("tabMap");
+  const tList = document.getElementById("tabList");
+  tMap.classList.toggle("active", onMap);
+  tList.classList.toggle("active", !onMap);
+  tMap.setAttribute("aria-selected", onMap);
+  tList.setAttribute("aria-selected", !onMap);
+  if (onMap){
+    // Leaflet must recompute size after the map becomes visible
+    setTimeout(() => { map.invalidateSize(); if (!mapEverShown){ fitMarkers(); mapEverShown = true; } }, 60);
+  }
+}
+document.getElementById("tabMap").addEventListener("click", () => setTab("map"));
+document.getElementById("tabList").addEventListener("click", () => setTab("list"));
+document.body.dataset.tab = "list";   // mobile opens on the list; desktop shows both regardless
+
 let activeType = "all";
 let query = "";
 let activeIdx = null;
@@ -570,10 +618,27 @@ STOPOVERS.forEach((s, i) => {
   m.bindPopup(
     `<strong>${escapeHtml(s.name)}</strong><br>${escapeHtml(s.place)} · ${escapeHtml(s.price)}`
   );
-  m.on("click", () => focusCard(i));
+  m.on("click", () => selectFromMap(i));
   markers.push(m);
 });
 fitMarkers();
+
+/* Tapping a map pin: on mobile jump to that site's list entry; on desktop scroll to it */
+function selectFromMap(i){
+  const s = STOPOVERS[i];
+  map.flyTo([s.lat, s.lng], Math.max(map.getZoom(), 10), { duration: 0.5 });
+  if (isMobile()){
+    activeIdx = i;
+    render();                      // expand the chosen card
+    setTab("list");
+    requestAnimationFrame(() => {
+      const el = document.getElementById("card-" + i);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  } else {
+    focusCard(i);
+  }
+}
 
 function fitMarkers(){
   const shown = markers.filter((_, i) => passesFilter(STOPOVERS[i]));
