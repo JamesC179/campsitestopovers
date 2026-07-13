@@ -51,7 +51,7 @@ window.STOPOVERS = [
     name: "North Morte Farm Campsite",
     type: "campsite",
     place: "Devon",
-    lat: 51.188510, lng: -4.203046,
+    lat: 51.188544, lng: -4.203475,
     w3w: "most.scans.reserving",
     price: "From £8.50 pppn",
     rating: 4,
@@ -59,7 +59,7 @@ window.STOPOVERS = [
     notes: "Options to go hard standing or grass pitch with EHU or more wild camp and find your own space.",
     contact: { label: "https://www.northmortefarm.co.uk/camping", href: "https://www.northmortefarm.co.uk/camping" },
     addedBy: "James C",
-    photos: ["https://jamesc179.github.io/campsitestopovers/images/newfold-farm-edale.jpg"]
+    photos: ["https://jamesc179.github.io/campsitestopovers/images/Morte_farm.png"]
   },
   {
     name: "New Fold Farm",
