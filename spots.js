@@ -51,7 +51,7 @@ window.STOPOVERS = [
     name: "North Morte Farm Campsite",
     type: "campsite",
     place: "Devon",
-    lat: 51.188544, lng: -4.203475,
+    lat: 51.189466, lng: -4.202076,
     w3w: "most.scans.reserving",
     price: "From £8.50 pppn",
     rating: 4,
