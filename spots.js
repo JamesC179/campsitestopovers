@@ -57,7 +57,7 @@ window.STOPOVERS = [
     notes: "Working farm campsite in the middle of Edale village, right where the Pennine Way begins and under Kinder Scout. Steps from the Old Nag's Head. Great walking base — check the site for pitch types and whether vans/hookups are available.",
     contact: { label: "newfoldfarmedale.com", href: "https://newfoldfarmedale.com/" },
     addedBy: "James C",
-    photos: []
+    photos: ["https://newfoldfarmedale.com/ways-to-stay/#camping","https://newfoldfarmedale.com/wp-content/uploads/2023/05/The-Fold-Newfold-Farm-Campsite-Breakfast.jpg"]
   },
   {
     name: "The Boat Inn",
