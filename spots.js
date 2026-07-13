@@ -17,7 +17,7 @@ window.STOPOVERS = [
     notes: "AMAZING views.",
     contact: { label: "https://dinasisland.co.uk/camping/", href: "https://dinasisland.co.uk/camping/" },
     addedBy: "James C",
-    photos: ["https://dinasisland.co.uk/wp-content/uploads/2018/09/ImageHandlerce7e.jpg""https://jamesc179.github.io/campsitestopovers/images/dinas_island_view.jpeg"]
+    photos: ["https://dinasisland.co.uk/wp-content/uploads/2018/09/ImageHandlerce7e.jpg","https://jamesc179.github.io/campsitestopovers/images/dinas_island_view.jpeg"]
   },
    {
     name: "Twisted Trout",
