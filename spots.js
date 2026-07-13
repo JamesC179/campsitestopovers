@@ -5,6 +5,20 @@
    Then commit. You never need to touch index.html for this.
    ============================================================ */
 window.STOPOVERS = [
+  {
+    name: "Dinas Island Campsite",
+    type: "campsite",
+    place: "Wales",
+    lat: 52.025884, lng: -4.902330,
+    w3w: "arrival.deck.pronouns",
+    price: "",
+    rating: 5,
+    facilities: ["Water", "Showers", "Toilets"],
+    notes: "AMAZING views.",
+    contact: { label: "https://dinasisland.co.uk/camping/", href: "https://dinasisland.co.uk/camping/" },
+    addedBy: "James C",
+    photos: ["https://dinasisland.co.uk/wp-content/uploads/2018/09/ImageHandlerce7e.jpg"]
+  },
    {
     name: "Twisted Trout",
     type: "pub",
