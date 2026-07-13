@@ -10,7 +10,7 @@ window.STOPOVERS = [
     type: "pub",
     place: "Rutland",
     lat: 52.667078, lng: -0.599035,
-    w3w: "Ushering.point.mercy",
+    w3w: "ushering.point.mercy",
     price: "Free",
     rating: 4,
     facilities: ["No facilities when the pub is shut"],
@@ -55,7 +55,7 @@ window.STOPOVERS = [
     notes: "Vintage Inn pub-restaurant beside the River Don at Sprotbrough lock — pretty riverside spot with towpath walks. It's a chain dining pub rather than a known Brit Stop, so ring ahead and check whether they're happy for you to park overnight before relying on it.",
     contact: { label: "vintageinn.co.uk", href: "https://www.vintageinn.co.uk/restaurants/yorkshire/theboatinnsprotbrough" },
     addedBy: "",
-    photos: [https://www.vintageinn.co.uk/content/dam/vintage-inn/images/pub-images/theboatinnsprotbrough/theboatinnsprotbrough-gallery_05.jpg]
+    photos: ["https://www.vintageinn.co.uk/content/dam/vintage-inn/images/pub-images/theboatinnsprotbrough/theboatinnsprotbrough-gallery_05.jpg"]
   },
   {
     name: "Shell Island",
