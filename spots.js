@@ -127,7 +127,7 @@ window.STOPOVERS = [
     notes: "Reddacleave Farm is located on the southern edge of Dartmoor in an 'Area of Outstanding Natural Beauty' The non electric pitches are totally unique, Double & Triple Size Pitches, secluded and come with their own eco off grid compost toilet.",
     contact: { label: "https://campingindevon.company.site/", href: "https://campingindevon.company.site/" },
     addedBy: "Tony R",
-    photos: ["https://jamesc179.github.io/campsitestopovers/images/Reddacleave_farm_1","https://jamesc179.github.io/campsitestopovers/images/Reddacleave_farm_2","https://jamesc179.github.io/campsitestopovers/images/Reddacleave_farm_3"]
+    photos: ["https://jamesc179.github.io/campsitestopovers/images/Reddacleave_farm_1.jpeg","https://jamesc179.github.io/campsitestopovers/images/Reddacleave_farm_2.jpeg","https://jamesc179.github.io/campsitestopovers/images/Reddacleave_farm_3.jpeg"]
   },
   {
     name: "Shell Island",
