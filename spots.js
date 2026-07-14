@@ -116,8 +116,8 @@ window.STOPOVERS = [
     photos: ["https://jamesc179.github.io/campsitestopovers/images/boat_inn_1.jpeg","https://jamesc179.github.io/campsitestopovers/images/boat_inn.jpeg"]
   },
      {
-    name: "Reddacleave Farm",
-    type: "pub",
+    name: "Reddacleave Farm - Wildcamping",
+    type: "campsite",
     place: "Dartmoor, Devon",
     lat: 50.460768, lng: -3.832815,
     w3w: "Token-Stable-Vans",
