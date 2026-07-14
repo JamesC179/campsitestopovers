@@ -92,7 +92,7 @@ window.STOPOVERS = [
     type: "campsite",
     place: "Llanbedr, Gwynedd, Wales",
     lat: 52.8137, lng: -4.1289,
-    price: "From £12.50 pn",
+    price: "From £12.50 pp",
      rating: 4,
     facilities: ["beach", "shop", "café", "bar", "showers", "tidal causeway"],
     notes: "One of Europe's largest campsites, on a tidal peninsula near Llanbedr — no marked pitches, so pick your own spot among the dunes with sea views. The causeway floods at high tide, so plan arrivals and departures around the tide tables on their site.",
