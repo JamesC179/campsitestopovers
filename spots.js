@@ -45,7 +45,7 @@ window.STOPOVERS = [
     notes: "Amazing lay-by stop, no facilities but the views and the beach were amazing. Walked up the hill behind the lay-by for a phone signal.",
     contact: { label: "Found on search for sites", href: "" },
     addedBy: "",
-    photos: ["https://jamesc179.github.io/campsitestopovers/images/rispond_1.jpeg","https://jamesc179.github.io/campsitestopovers/images/rispond_2.jpeg",]
+    photos: ["https://jamesc179.github.io/campsitestopovers/images/rispond_1.jpeg","https://jamesc179.github.io/campsitestopovers/images/rispond_2.jpeg"]
   },
      {
     name: "Druridge Bay Campsite",
