@@ -28,7 +28,7 @@ window.STOPOVERS = [
     price: "From £20",
     rating: 5,
     facilities: ["Free WiFi", "Toilets", "Showers", "Fire pits", "Dog showers", "Small Shop"],
-    notes: "One of the best campsites on the NC 500, very dog friendly, got a party bag of treats for the dogs when we arrived. No extra charge for awnings etc. They also have paddle boards you can use free of charge, beach is beautiful",
+    notes: "One of the best campsites on the NC 500, very dog friendly, got a party bag of treats for the dogs when we arrived. No extra charge for awnings etc. They also have paddle boards you can use free of charge, beach is beautiful. There are many options to eat out whilst staying there. We didn't go in any as we were only here one night, wish it had been more, will need to book as they get busy.",
     contact: { label: "https://www.clachtollbeachcampsite.com/", href: "https://www.clachtollbeachcampsite.com/" },
     addedBy: "James C",
     photos: ["https://jamesc179.github.io/campsitestopovers/images/clachtoll_campsite_1.jpeg","https://jamesc179.github.io/campsitestopovers/images/clachtoll_campsite_2.jpeg","https://jamesc179.github.io/campsitestopovers/images/clachtoll_campsite_3.jpeg"]
