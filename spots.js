@@ -23,7 +23,7 @@ window.STOPOVERS = [
     name: "Druridge Bay Campsite",
     type: "campsite",
     place: "Northumberland",
-    lat: 55.290223, lng: -1.5716670,
+    lat: 55.292307, lng: -1.573909,
     w3w: "bend.cakes.upholding",
     price: "From £32",
     rating: 4,
