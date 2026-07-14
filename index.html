@@ -471,6 +471,7 @@
             <option value="pub">Pub stopover</option>
             <option value="campsite">Campsite</option>
             <option value="free">Free spot</option>
+            <option value="overnight">Overnight parking</option>
           </select>
         </div>
         <div class="field">
@@ -551,7 +552,7 @@ const CONFIG = {
   siteTitle:  "Campervan Stopovers",
   tagline:    "Pub stops · campsites · free spots",
   ownerName:  "James",                       // shown to friends when they submit a spot
-  version:    "2026.1.4",                       // code version (bump when you change index.html)
+  version:    "2026.1.5",                       // code version (bump when you change index.html)
   githubRepo: "jamesc179/campsitestopovers"  // (kept for reference; not used for submissions)
 };
 
@@ -563,9 +564,10 @@ const STOPOVERS = SPOTS_LOADED ? window.STOPOVERS : [];
    3) App logic — no need to edit below.
    ============================================================ */
 const TYPES = {
-  pub:      { label:"PUB",  ico:"🍺", color:"#b1531d" },
-  campsite: { label:"CAMP", ico:"⛺", color:"#3e7a5c" },
-  free:     { label:"FREE", ico:"🅿", color:"#5b6b8c" }
+  pub:       { label:"PUB",  ico:"🍺", color:"#b1531d" },
+  campsite:  { label:"CAMP", ico:"⛺", color:"#3e7a5c" },
+  free:      { label:"FREE", ico:"🅿", color:"#5b6b8c" },
+  overnight: { label:"STAY", ico:"🌙", color:"#2c6e7f" }
 };
 
 document.getElementById("siteTitle").textContent = CONFIG.siteTitle;
@@ -655,7 +657,7 @@ function fitMarkers(){
 
 /* ---- Filter chips ---- */
 const chipsEl = document.getElementById("chips");
-const chipDefs = [["all","All"], ["pub","Pub stops"], ["campsite","Campsites"], ["free","Free"]];
+const chipDefs = [["all","All"], ["pub","Pub stops"], ["campsite","Campsites"], ["free","Free"], ["overnight","Overnight"]];
 chipDefs.forEach(([val, label]) => {
   const b = document.createElement("button");
   b.className = "chip"; b.textContent = label;
