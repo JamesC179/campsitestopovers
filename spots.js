@@ -27,8 +27,8 @@ window.STOPOVERS = [
     w3w: "bend.cakes.upholding",
     price: "From £32",
     rating: 4,
-    facilities: ["shower", "toilet", "dish washing"],
-    notes: "Electric is on hardstanding pitches, and on tent pitches A to G On site cafe/information centre watersports available on the lake (with the purchase of a permit) dog friendly across the site. Nothing around so make sure you have food etc. We didn't use the cafe. Can walk to the beach and a lovely walk around the lake, very dog friendly. Book through Northumberland Council website. No reception you just drive on and find your pitch, an unmanned campsite.",
+    facilities: ["showers", "toilets", "dish washing"],
+    notes: "Electric is on hardstanding pitches, and on tent pitches A to G. On site cafe/information centre, watersports available on the lake (with the purchase of a permit) and dog friendly across the site. Nothing around so make sure you have food etc. We didn't use the cafe. Can walk to the beach and a lovely walk around the lake, very dog friendly. Book through Northumberland Council website. No reception you just drive on and find your pitch, an unmanned campsite.",
     contact: { label: "01670 760968  https://www.northumberland.gov.uk/parks/country-parks-visitor-centres-coastal-sites/druridge-bay-campsite", href: "" },
     addedBy: "James C",
     photos: ["https://jamesc179.github.io/campsitestopovers/images/druridge_bay_3.jpeg","https://jamesc179.github.io/campsitestopovers/images/druridge_bay_1.jpeg","https://jamesc179.github.io/campsitestopovers/images/druridge_bay_2.jpeg"]
