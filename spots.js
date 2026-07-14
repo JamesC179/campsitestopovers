@@ -20,6 +20,20 @@ window.STOPOVERS = [
     photos: ["https://dinasisland.co.uk/wp-content/uploads/2018/09/ImageHandlerce7e.jpg","https://jamesc179.github.io/campsitestopovers/images/dinas_island_view.jpeg"]
   },
      {
+    name: "Clachtoll Beach Campsite",
+    type: "campsite",
+    place: "Lairg, Scotland",
+    lat: 58.190973, lng: -5.33881,
+    w3w: "including.massive.familiar",
+    price: "From £20",
+    rating: 5,
+    facilities: ["Free WiFi", "Toilets", "Showers", "Fire pits", "Dog showers", "Small Shop"],
+    notes: "One of the best campsites on the NC 500, very dog friendly, got a party bag of treats for the dogs when we arrived. No extra charge for awnings etc. They also have paddle boards you can use free of charge, beach is beautiful",
+    contact: { label: "https://www.clachtollbeachcampsite.com/", href: "https://www.clachtollbeachcampsite.com/" },
+    addedBy: "James C",
+    photos: ["https://jamesc179.github.io/campsitestopovers/images/clachtoll_campsite_1.jpeg","https://jamesc179.github.io/campsitestopovers/images/clachtoll_campsite_2.jpeg","https://jamesc179.github.io/campsitestopovers/images/clachtoll_campsite_3.jpeg"]
+  },
+     {
     name: "Druridge Bay Campsite",
     type: "campsite",
     place: "Northumberland",
