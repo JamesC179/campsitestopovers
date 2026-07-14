@@ -542,7 +542,10 @@
 </div>
 
 <!-- Your spots live in spots.js, so code updates here never overwrite them -->
-<script src="spots.js"></script>
+<!-- Load spots.js with a cache-buster so spot updates show on a normal refresh (no Ctrl+F5) -->
+<script>
+  document.write('<script src="spots.js?v=' + Date.now() + '"><\/script>');
+</script>
 
 <script>
 /* ============================================================
@@ -552,7 +555,7 @@ const CONFIG = {
   siteTitle:  "Campervan Stopovers",
   tagline:    "Pub stops · campsites · free spots",
   ownerName:  "James",                       // shown to friends when they submit a spot
-  version:    "2026.1.5",                       // code version (bump when you change index.html)
+  version:    "2026.1.6",                       // code version (bump when you change index.html)
   githubRepo: "jamesc179/campsitestopovers"  // (kept for reference; not used for submissions)
 };
 
