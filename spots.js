@@ -115,6 +115,20 @@ window.STOPOVERS = [
     addedBy: "",
     photos: ["https://jamesc179.github.io/campsitestopovers/images/boat_inn_1.jpeg","https://jamesc179.github.io/campsitestopovers/images/boat_inn.jpeg"]
   },
+     {
+    name: "Reddacleave Farm",
+    type: "pub",
+    place: "Dartmoor, Devon",
+    lat: 50.460768, lng: -3.832815,
+    w3w: "Token-Stable-Vans",
+    price: "",
+    rating: 4,
+    facilities: ["Water", "Showers", "Compost Toilets (open air)"],
+    notes: "Reddacleave Farm is located on the southern edge of Dartmoor in an 'Area of Outstanding Natural Beauty' The non electric pitches are totally unique, Double & Triple Size Pitches, secluded and come with their own eco off grid compost toilet.",
+    contact: { label: "https://campingindevon.company.site/", href: "https://campingindevon.company.site/" },
+    addedBy: "Tony R",
+    photos: ["https://jamesc179.github.io/campsitestopovers/images/Reddacleave_farm_1","https://jamesc179.github.io/campsitestopovers/images/Reddacleave_farm_2","https://jamesc179.github.io/campsitestopovers/images/Reddacleave_farm_3"]
+  },
   {
     name: "Shell Island",
     type: "campsite",
