@@ -76,7 +76,7 @@ window.STOPOVERS = [
     photos: ["https://jamesc179.github.io/campsitestopovers/images/Morte_farm.png"]
   },
   {
-    name: "New Fold Farm",
+    name: "Newfold Farm",
     type: "campsite",
     place: "Edale, Peak District",
     lat: 53.3665, lng: -1.8161,
