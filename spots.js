@@ -48,6 +48,20 @@ window.STOPOVERS = [
     photos: []
   },
      {
+    name: "Northumberland Motorhome Parking",
+    type: "pub",
+    place: "Northumberland",
+    lat: 55.551971, lng: -1.629383,
+    w3w: "forgiving.skewed.hotels",
+    price: "£15",
+    rating: 4,
+    facilities: ["Public Toilets"],
+    notes: "There are three car parks with Motorhome bays that you can book, we only stayed in the Beadnell, right by the beach and public toilets too, it said the toilets were locked overnight but they weren't. Toilets not great but better than nothing",
+    contact: { label: "https://www.northumberland.gov.uk/parking/council-car-parks/motorhome-parking", href: "https://www.northumberland.gov.uk/parking/council-car-parks/motorhome-parking" },
+    addedBy: "James C",
+    photos: ["https://jamesc179.github.io/campsitestopovers/images/beadnell_beach"]
+  },
+     {
     name: "North Morte Farm Campsite",
     type: "campsite",
     place: "Devon",
