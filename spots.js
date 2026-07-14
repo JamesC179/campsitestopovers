@@ -49,7 +49,7 @@ window.STOPOVERS = [
   },
      {
     name: "Northumberland Motorhome Parking",
-    type: "parking",
+    type: "Overnight",
     place: "Northumberland",
     lat: 55.551971, lng: -1.629383,
     w3w: "forgiving.skewed.hotels",
