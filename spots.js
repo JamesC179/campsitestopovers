@@ -98,7 +98,7 @@ window.STOPOVERS = [
     price: "£15",
     rating: 4,
     facilities: ["Public Toilets"],
-    notes: "There are three car parks with Motorhome bays that you can book, we only stayed in the Beadnell, right by the beach and public toilets too, it said the toilets were locked overnight but they weren't. Toilets not great but better than nothing. Have to book your spot on the council website",
+    notes: "There are three car parks with Motorhome bays that you can book, we only stayed in the Beadnell, right by the beach and public toilets too, it said the toilets were locked overnight but they weren't. Toilets not great but better than nothing. Have to book your spot on the council website. The craster Arms in the town is worth a visit, very good food.",
     contact: { label: "https://www.northumberland.gov.uk/parking/council-car-parks/motorhome-parking", href: "https://www.northumberland.gov.uk/parking/council-car-parks/motorhome-parking" },
     addedBy: "James C",
     photos: ["https://jamesc179.github.io/campsitestopovers/images/beadnell_beach.jpeg"]
